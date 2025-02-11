@@ -1,12 +1,12 @@
 # ANSIBLE PLAYBOOK SCRIPT TO CHECK TARGET CONNECTION:
 
-
 ---
 - name: check with the target
   hosts: worker
   user: ansible
   become: yes
   connection: ssh
+---------------------------------------------------------------------------------------------------------------
 
 # ANSIBLE PLAYBOOK SCRIPT WHICH INCLUDES TARGET SECTION:
 
@@ -21,6 +21,7 @@
     - name: install httpd
       command: yum install httpd -y
 
+---------------------------------------------------------------------------------------------------------------
 # ANSIBLE PLAYBOOK SCRITP TO INSTALL AND START HTTPD:
 
 ---
@@ -40,6 +41,7 @@
         name: httpd
         state: started
 
+---------------------------------------------------------------------------------------------------------------
 # ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING VARIABLES:
 
 ---
@@ -61,6 +63,7 @@
         name: "{{ pkg_name }}"
         state: started
 
+---------------------------------------------------------------------------------------------------------------
 # ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING NOTIFY AND HANDLERS:
 
 ---
@@ -84,7 +87,7 @@
         name: "{{ pkg_name }}"
         state: started
 
-
+---------------------------------------------------------------------------------------------------------------
 # ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING ACTION:
 
 ---
@@ -100,7 +103,7 @@
     - name: start the service
       action: service name=httpd state=started
 
-
+---------------------------------------------------------------------------------------------------------------
 # ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING ACTION WITH VARIBALES:
 
 ---
@@ -120,7 +123,7 @@
     - name: start the service
       action: service name={{ pkg_name }} state={{ start_state }}
 
-
+---------------------------------------------------------------------------------------------------------------
 # ANSIBLE PLAYBOOK SCRIPT TO CREATE MULTIPLE USERS:
 
 ---
@@ -145,7 +148,7 @@
 --> To remove the users:
 		- change the state from present to absent
 
-
+---------------------------------------------------------------------------------------------------------------
 # ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING CONDITIONAL STATEMENTS:
 
 ---
@@ -167,6 +170,7 @@
         name: httpd
         state: started
 
+---------------------------------------------------------------------------------------------------------------
 # ANSIBLE PLAYBOOK SCRIPT TO IGNORE THE ERRORS IN EACH TASKS:
 
 ---
@@ -187,7 +191,7 @@
       command: /bin/bash
       ignore_errors: yes
 
-
+---------------------------------------------------------------------------------------------------------------
 # COPY A FILE FROM MASTER NODE TO WORKER NODE:
 
 ---
@@ -204,7 +208,7 @@
     - name: execute shell file
       command: /bin/bash /home/ansible/jen.sh
 
-
+---------------------------------------------------------------------------------------------------------------
 # File permission
 
 ---
@@ -225,6 +229,7 @@
     - name: execute shell file
       command: /bin/bash /home/ansible/jen.sh
 
+---------------------------------------------------------------------------------------------------------------
 # ANSIBLE TAGS:
 
 ---

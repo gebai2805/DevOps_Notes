@@ -264,3 +264,47 @@
 	- ansible-playbook main11.yml --tags start    # Only start the service
 	- ansible-playbook main11.yml --tags stop     # Only stop the service
 
+
+
+
+
+#
+
+
+---
+- name: check with the target
+  hosts: production
+  user: ansible
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: update the system
+      yum:
+        name: "*"
+        state: latest
+    - name: copy shell file to worker nodes
+      copy:
+        src: docker.sh
+        dest: /home/ansible/docker.sh
+    - name: change permission
+      file:
+        path: /home/ansible/docker.sh
+        mode: "0777"
+    - name: install docker
+      command: /bin/bash /home/ansible/docker.sh
+    - name: check if docker is installed or not
+      command: docker --version
+      register: docker_installed
+      ignore_errors: yes
+    - name: check if the container exists
+      command: docker ps -q -f name=webapp
+      register: container_status
+      changed_when: false
+    - name: check and remove the docker container
+      command: docker rm -f webapp
+      when: container_status.stdout != ""
+    - name: pull nginx image
+      command: docker pull nginx
+    - name: Run docker container
+      command: docker run -it -d --name webapp -p 8000:80 nginx
+

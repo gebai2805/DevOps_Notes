@@ -1,0 +1,40 @@
+### Error: fatal: [172.31.4.225]: FAILED! => {"ansible_facts": {"discovered_interpreter_python": "/usr/bin/python"}, "changed": false, "msg": "The following packages have pending transactions: httpd-x86_64", "rc": 125, "results": []}
+
+
+The error message indicates that the installation of `httpd` is failing because there are **pending transactions** for the package `httpd-x86_64`. This usually happens when a previous package installation was interrupted or not completed properly.
+
+### 🔹 **Fix the issue:**
+#### 1️⃣ **Check and clear pending transactions**
+Run this command on the target machine (`172.31.4.225`) to see if there are any pending transactions:
+```bash
+sudo yum-complete-transaction --cleanup-only
+```
+If the command isn't found, install `yum-utils`:
+```bash
+sudo yum install -y yum-utils
+```
+Then retry:
+```bash
+sudo yum-complete-transaction --cleanup-only
+```
+
+#### 2️⃣ **Manually clean up the cache**
+Run these commands:
+```bash
+sudo yum clean all
+sudo yum makecache
+```
+
+#### 3️⃣ **Retry the Ansible playbook**
+After performing the above steps, rerun your playbook:
+```bash
+ansible-playbook main4.yml
+```
+
+### ✅ **Additional Fix (If Issue Persists)**
+If the error still appears, try manually finishing the pending transactions using:
+```bash
+sudo yum check
+sudo yum update -y
+```
+Then retry your Ansible playbook.

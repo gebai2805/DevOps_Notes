@@ -1,0 +1,261 @@
+# ANSIBLE PLAYBOOK SCRIPT TO CHECK TARGET CONNECTION:
+
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+
+# ANSIBLE PLAYBOOK SCRIPT WHICH INCLUDES TARGET SECTION:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: install httpd
+      command: yum install httpd -y
+
+# ANSIBLE PLAYBOOK SCRITP TO INSTALL AND START HTTPD:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: install httpd
+      yum:
+        name: httpd
+        state: present
+    - name: start the service
+      service:
+        name: httpd
+        state: started
+
+# ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING VARIABLES:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: no
+  vars:
+    pkg_name: httpd
+  tasks:
+    - name: install httpd
+      yum:
+        name: "{{ pkg_name }}"
+        state: present
+    - name: start the service
+      service:
+        name: "{{ pkg_name }}"
+        state: started
+
+# ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING NOTIFY AND HANDLERS:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: no
+  vars:
+    pkg_name: httpd
+  tasks:
+    - name: install httpd
+      yum:
+        name: "{{ pkg_name }}"
+        state: present
+      notify: start the service
+  handlers:
+    - name: start the service
+      service:
+        name: "{{ pkg_name }}"
+        state: started
+
+
+# ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING ACTION:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: yes
+  tasks:
+    - name: install httpd
+      action: yum name=httpd state=present
+    - name: start the service
+      action: service name=httpd state=started
+
+
+# ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING ACTION WITH VARIBALES:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: no
+  vars:
+    pkg_name: httpd
+    present_state: present
+    start_state: started
+  tasks:
+    - name: install httpd
+      action: yum name={{ pkg_name }} state={{ present_state }}
+    - name: start the service
+      action: service name={{ pkg_name }} state={{ start_state }}
+
+
+# ANSIBLE PLAYBOOK SCRIPT TO CREATE MULTIPLE USERS:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: yes
+  tasks:
+    - name: create multiple users
+      user: name={{ item }} state=present
+      with_items:
+        - dev
+        - devops
+        - test
+        - manager
+
+--> check if the users were created successfully: 
+		- go to worker node
+		- cat /etc/passwd
+--> To remove the users:
+		- change the state from present to absent
+
+
+# ANSIBLE PLAYBOOK SCRIPT TO INSTALL AND START HTTPD USING CONDITIONAL STATEMENTS:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: yes
+  tasks:
+    - name: install apache2
+      command: apt-get install apache2 -y
+      when: ansible_os_family == "Debian"
+    - name: install httpd
+      command: yum install httpd -y
+      when: ansible_os_family == "RedHat"
+    - name: start the service
+      service:
+        name: httpd
+        state: started
+
+# ANSIBLE PLAYBOOK SCRIPT TO IGNORE THE ERRORS IN EACH TASKS:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: install httpd
+      command: sudo yum install httpd -y
+    - name: start the service
+      service:
+        name: httpd
+        state: started
+    - name: check for error and ignore it in the tasks
+      command: /bin/bash
+      ignore_errors: yes
+
+
+# COPY A FILE FROM MASTER NODE TO WORKER NODE:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: copy file to worker node
+      copy:
+        src: ./jen.sh
+        dest: /home/ansible/jen.sh
+    - name: execute shell file
+      command: /bin/bash /home/ansible/jen.sh
+
+
+# File permission
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: copy file to worker node
+      copy:
+        src: ./jen.sh
+        dest: /home/ansible/jen.sh
+    - name: change permission
+      file:
+        path: /home/ansible/jen.sh
+        mode: "0777"
+    - name: execute shell file
+      command: /bin/bash /home/ansible/jen.sh
+
+# ANSIBLE TAGS:
+
+---
+- name: check with the target
+  hosts: worker
+  user: ansible
+  become: yes
+  connection: ssh
+  gather_facts: no
+  tasks:
+    - name: install httpd
+      yum:
+        name: httpd
+        state: present
+      tags:
+          - install
+    - name: Start the service
+      service:
+        name: httpd
+        state: started
+      tags:
+          - start
+    - name: stop the service
+      service:
+        name: httpd
+        state: stopped
+      tags:
+          - stop
+
+--> To run a specific task using tags using the following commands
+	- ansible-playbook main11.yml --tags install  # Only install httpd
+	- ansible-playbook main11.yml --tags start    # Only start the service
+	- ansible-playbook main11.yml --tags stop     # Only stop the service
+

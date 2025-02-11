@@ -268,7 +268,17 @@
 
 
 
-#
+# TASK1: perform ansible configuration with one master and two worker nodes with the group name called production
+write an ansible playbook script containing some set of tasks
+1. update the system
+2. copy shell file of docker installation commands into worker nodes
+3. change the shell file permission
+4.  install docker using shell file
+5. pull nginx image
+6. run the nginx container with the name webapp with a container port 8000
+
+
+NOTE: whenever executing same playbook multiple times, it should execute without error
 
 
 ---
